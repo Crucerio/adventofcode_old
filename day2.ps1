@@ -12,7 +12,7 @@ while ($ende -ne $true) {
     $c += 4
 }
 Write-Host "the answer is:", $a[0]
-
+$before=Get-Date
 ##day 2 part 2
 for ($noun = 0; $noun -lt 100; $noun++) {
     for ($verb = 0; $verb -lt 100; $verb++) {
@@ -28,10 +28,11 @@ for ($noun = 0; $noun -lt 100; $noun++) {
             }
             $c += 4
         }
-        Write-Host "the answer is:", $a[0]
         if ($a[0] -eq 19690720) {
             Write-Host "noun= $noun `n verb= $verb"
-            Pause
+            $dauer=(get-date)-$before
+            $dauer.TotalSeconds
+            break 2
         }
     } 
 }
