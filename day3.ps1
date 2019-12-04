@@ -129,26 +129,19 @@ foreach ($Cd1 in $CableDirections1) {
     }
 }
 
-$CableCoordinates0|Where-Object {
-
-    $CableCoordinates1find -contains $_.x
-    
+[array]$points0=foreach ($CableCoordinate0 in $CableCoordinates0){
+    "$($CableCoordinate0.x),$($CableCoordinate0.y)"
 }
-write-output "Starte suche nach Kreuzungen"
-$lowestcross=0
-foreach ($CableCoordinate0 in $CableCoordinates0){
-    $CableCoordinates1|Where-Object{
-     (($CableCoordinate0.x -eq $_.x) -and ($CableCoordinate0.y -eq $_.y))
-    }|ForEach-Object{
-        @{Distance = [Math]::Abs($_.x)+[Math]::Abs($_.y)}
-    }|ForEach-Object{
-        $_.Distance
-        if ($lowestcross -ne 0) {
-            $lowestcross=[Math]::Min($lowestcross,$_.Distance)
-        }else{
-            $lowestcross=$_.Distance
-        }
+[array]$points1=foreach ($CableCoordinate1 in $CableCoordinates1){
+    "$($CableCoordinate1.x),$($CableCoordinate1.y)"
+}
+$lowestcross=3012342345
+foreach ($point0 in $points0) {
+    if($points1.Contains($point0)){
+        $point0
+        $xy=$point0 -split ","
+        $Distance = [Math]::Abs($xy[0])+[Math]::Abs($xy[1])
+        $lowestcross=[Math]::Min($lowestcross,$Distance)
     }
 }
-
 $lowestcross
