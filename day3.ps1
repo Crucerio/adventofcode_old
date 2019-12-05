@@ -32,11 +32,14 @@ $currentPosition = [PSCustomObject]@{
 }
 
 write-output "Starte Koordinatenliste 0"
+$steps=0
+$CableCoordinatesandLength0=@{}
 $CableCoordinates0=New-Object System.Collections.ArrayList 
 foreach ($Cd0 in $CableDirections0) {
     switch ($Cd0.Direction) {
         "R" { 
             while ($Cd0.Distance -gt 0) {
+                $steps++
                 $currentPosition.x=$currentPosition.x+1
                 $CableCoordinates0.add([PSCustomObject]@{
                     x = $currentPosition.x
@@ -47,6 +50,7 @@ foreach ($Cd0 in $CableDirections0) {
         }
         "L" { 
             while ($Cd0.Distance -gt 0) {
+                $steps++
                 $currentPosition.x=$currentPosition.x-1
                 $CableCoordinates0.add([PSCustomObject]@{
                     x = $currentPosition.x
@@ -57,6 +61,7 @@ foreach ($Cd0 in $CableDirections0) {
         }
         "U" { 
             while ($Cd0.Distance -gt 0) {
+                $steps++
                 $currentPosition.y=$currentPosition.y+1
                 $CableCoordinates0.add([PSCustomObject]@{
                     x = $currentPosition.x
@@ -67,6 +72,7 @@ foreach ($Cd0 in $CableDirections0) {
         }
         "D" { 
             while ($Cd0.Distance -gt 0) {
+                $steps++
                 $currentPosition.y=$currentPosition.y-1
                 $CableCoordinates0.add([PSCustomObject]@{
                     x = $currentPosition.x
@@ -83,11 +89,14 @@ $currentPosition = [PSCustomObject]@{
     y = 0
 }
 write-output "Starte Koordinatenliste 1"
+$steps=0
+$CableCoordinatesandLength1=@{}
 $CableCoordinates1=New-Object System.Collections.ArrayList 
 foreach ($Cd1 in $CableDirections1) {
     switch ($Cd1.Direction) {
         "R" { 
             while ($Cd1.Distance -gt 0) {
+                $steps++
                 $currentPosition.x=$currentPosition.x+1
                 $CableCoordinates1.Add([PSCustomObject]@{
                     x = $currentPosition.x
@@ -98,6 +107,7 @@ foreach ($Cd1 in $CableDirections1) {
         }
         "L" { 
             while ($Cd1.Distance -gt 0) {
+                $steps++
                 $currentPosition.x=$currentPosition.x-1
                 $CableCoordinates1.Add([PSCustomObject]@{
                     x = $currentPosition.x
@@ -108,6 +118,7 @@ foreach ($Cd1 in $CableDirections1) {
         }
         "U" { 
             while ($Cd1.Distance -gt 0) {
+                $steps++
                 $currentPosition.y=$currentPosition.y+1
                 $CableCoordinates1.Add([PSCustomObject]@{
                     x = $currentPosition.x
@@ -118,6 +129,7 @@ foreach ($Cd1 in $CableDirections1) {
         }
         "D" { 
             while ($Cd1.Distance -gt 0) {
+                $steps++
                 $currentPosition.y=$currentPosition.y-1
                 $CableCoordinates1.Add([PSCustomObject]@{
                     x = $currentPosition.x
@@ -129,19 +141,50 @@ foreach ($Cd1 in $CableDirections1) {
     }
 }
 
+Write-Output "Erstelle Koordinatenliste"
 [array]$points0=foreach ($CableCoordinate0 in $CableCoordinates0){
     "$($CableCoordinate0.x),$($CableCoordinate0.y)"
 }
 [array]$points1=foreach ($CableCoordinate1 in $CableCoordinates1){
     "$($CableCoordinate1.x),$($CableCoordinate1.y)"
 }
+write-output "Start searching for lowest intersection"
 $lowestcross=3012342345
-foreach ($point0 in $points0) {
+$intersections=foreach ($point0 in $points0) {
     if($points1.Contains($point0)){
-        $point0
         $xy=$point0 -split ","
         $Distance = [Math]::Abs($xy[0])+[Math]::Abs($xy[1])
         $lowestcross=[Math]::Min($lowestcross,$Distance)
+        if($lowestcross -eq $Distance){
+            $lowestcrossindex=$point0
+        }
+        $point0
     }
 }
+Write-Output "Closest by Manhattan Distance"
 $lowestcross
+
+$steps=0
+[hashtable]$index0=@{}
+foreach ($CableCoordinate0 in $CableCoordinates0){
+    $steps++
+    $coord="$($CableCoordinate0.x),$($CableCoordinate0.y)"
+    $index0[$coord]=$steps
+}
+
+$steps=0
+[hashtable]$index1=@{}
+foreach ($CableCoordinate1 in $CableCoordinates1){
+    $steps++
+    $coord="$($CableCoordinate1.x),$($CableCoordinate1.y)"
+    $index1[$coord]=$steps
+}
+
+$index0["1668,321"]
+
+[Int]$way=1232343457
+foreach($intersection in $intersections){
+    $way=[math]::Min($index0[$intersection]+$index1[$intersection],$way)
+}
+#107754
+$way
