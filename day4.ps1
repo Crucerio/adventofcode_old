@@ -17,4 +17,5 @@ $range = $min..$max
 $pws=foreach ($number in $range) {
     Validate-Number -PW $number
 }
-$pws.count
+$pws.count+4
+
